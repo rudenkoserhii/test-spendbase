@@ -3,37 +3,50 @@ import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Weather } from './weather.entity';
+import { COORDINATES } from 'types';
 
 @Injectable()
 export class WeatherService {
-  private readonly apiKey = process.env.OPENWEATHERMAP_API_KEY;
+    private readonly apiKey = process.env.OPENWEATHERMAP_API_KEY;
+    private readonly url = process.env.OPENWEATHERMAP_URL;
 
-  constructor(
-    @InjectRepository(Weather)
-    private weatherRepository: Repository<Weather>,
-  ) {}
+    constructor(
+        @InjectRepository(Weather)
+        private weatherRepository: Repository<Weather>,
+    ) { }
 
-  async fetchAndSaveWeather(lat: number, lon: number, part: string): Promise<Weather> {
-    console.log('apiKey', this.apiKey);
-    
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${this.apiKey}`;
-    const response = await axios.get(url);
-    console.log(response)
-    const weatherData = response.data;
+    async fetchAndSaveWeather(coordinates: COORDINATES): Promise<Weather> {
+        const { lat, lon, part } = coordinates || {};
 
-    const weather = this.weatherRepository.create({
-      lat,
-      lon,
-      part,
-      data: weatherData,
-    });
+        const response = await axios.get(
+            this.url,
+            {
+                params: {
+                    lat,
+                    lon,
+                    exclude: part,
+                    appid: this.apiKey,
+                }
+            }
+        );
 
-    return this.weatherRepository.save(weather);
-  }
+        const weatherData = response.data;
 
-  async getWeather(lat: number, lon: number, part: string): Promise<Weather> {
-    return this.weatherRepository.findOne({
-      where: { lat, lon, part },
-    });
-  }
+        const weather = this.weatherRepository.create({
+            lat,
+            lon,
+            part,
+            data: weatherData,
+        });
+
+        return this.weatherRepository.save(weather);
+    }
+
+    async getWeather(coordinates: COORDINATES): Promise<Weather> {
+        const { lat, lon, part } = coordinates || {};
+
+        return this.weatherRepository.findOne({
+            where: { lat, lon, part },
+        });
+    }
 }

@@ -17,10 +17,9 @@ export class WeatherController {
   @ApiResponse({ status: HttpStatus.OK, type: Weather, description: MESSAGES.WEATHER_RECORDED })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   async fetchAndSaveWeather(
-    @Body() body: COORDINATES,
+    @Body() coordinates: COORDINATES,
   ): Promise<Weather> {
-    const { lat, lon, part } = body || {};
-    return this.weatherService.fetchAndSaveWeather(lat, lon, part);
+    return this.weatherService.fetchAndSaveWeather(coordinates);
   }
 
   @Get(ROUTES.ROOT)
@@ -29,9 +28,8 @@ export class WeatherController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseInterceptors(WeatherInterceptor)
   async getWeather(
-    @Query() query: COORDINATES,
+    @Query() coordinates: COORDINATES,
   ): Promise<Weather> {
-    const { lat, lon, part } = query || {};
-    return this.weatherService.getWeather(lat, lon, part);
+    return this.weatherService.getWeather(coordinates);
   }
 }
