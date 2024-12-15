@@ -1,0 +1,1 @@
+export { type COORDINATES } from './coordinates.types'
