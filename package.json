@@ -2,6 +2,10 @@
   "name": "test-spendbase",
   "version": "0.0.1",
   "description": "test-spendbase API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rudenkoserhii/test-spendbase"
+  },
   "author": "",
   "private": true,
   "license": "UNLICENSED",
