@@ -1,99 +1,122 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+test-spendbase API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the test-spendbase API, a backend service designed for managing weather data using NestJS and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. Overview
+This project provides a RESTful API for handling weather data, including fetching, saving, and retrieving weather information based on geographic coordinates. It leverages NestJS for backend logic, TypeScript for type safety, and TypeORM for database interactions with PostgreSQL.
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+2. Project Structure
+```text
+├── src/                           # Source code
+│   ├── app/                       # Core application files
+│   │   ├── app.controller.spec.ts # Unit tests for app controller
+│   │   ├── app.controller.ts      # Main controller
+│   │   ├── app.module.ts          # Main module
+│   │   └── app.service.ts         # Main service
+│   ├── consts/                    # Constants used across the application
+│   ├── database/                  # Database configuration
+│   ├── types/                     # Type definitions
+│   └── weather/                   # Weather module
+│       ├── dto/                   # Data Transfer Objects
+│       ├── weather.controller.spec.ts # Unit tests for weather controller
+│       ├── weather.controller.ts      # Weather data controller
+│       ├── weather.entity.ts           # ORM entity for weather data
+│       ├── weather.interceptor.spec.ts # Unit tests for weather interceptor
+│       ├── weather.interceptor.ts      # Interceptor for response transformation
+│       ├── weather.module.ts           # Weather module configuration
+│       ├── weather.service.spec.ts     # Unit tests for weather service
+│       └── weather.service.ts          # Weather data service
+├── test/                          # End-to-end tests
+├── .env                           # Environment variables
+├── .eslintrc.js                   # ESLint configuration
+├── .gitignore                     # Git ignore file
+├── .prettierrc                    # Prettier configuration
+├── docker-compose.yml             # Docker Compose for multi-container setup
+├── Dockerfile                     # Dockerfile for containerizing the app
+├── nest-cli.json                  # NestJS CLI configuration
+├── package.json                   # Project configuration
+├── README.md                      # This file
+├── task.md                        # Task documentation
+├── tsconfig.build.json            # TypeScript build configuration
+└── tsconfig.json                  # TypeScript configuration file
 ```
 
-## Compile and run the project
+3. Getting Started
+- Prerequisites
+- Node.js v20.3.1 or higher
+- PostgreSQL (for database)
 
+4. Installation
+Clone the repository:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone [your-repository-url]
+cd test-spendbase
 ```
 
-## Run tests
-
+5. Install dependencies:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+6. Set up environment variables:
+Copy .env.example to .env if it exists, or create one manually with these required variables:
 ```bash
-$ npm install -g mau
-$ mau deploy
+PORT=3000
+HOST=localhost
+PROTOCOL=http
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=your_user
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=your_db_name
+OPENWEATHERMAP_API_KEY=your_api_key
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+7. Run the application:
+```bash
+npm run start:dev
+```
 
-## Resources
+For production:
+```bash
+npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+8. Running Tests
+- Unit Tests:
+```bash
+npm run test
+```
+- End-to-End Tests:
+```bash
+npm run test:e2e
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+9. Features Implemented
+- Weather Data Management: CRUD operations for weather data.
+- API Documentation via Swagger, accessible at /swagger.
+- Data Interception for response formatting with custom interceptors.
+- Error Handling and HTTP status code responses.
 
-## Support
+10. API Documentation
+Access the Swagger UI at http://localhost:3000/swagger once the server is running for detailed API endpoint descriptions.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+11. Code Quality
+Follows NestJS best practices for modularity and structure.
+Uses ESLint and Prettier for code consistency and formatting.
+Comprehensive testing with Jest for unit and e2e scenarios.
 
-## Stay in touch
+12. Deployment
+The project includes Dockerfile and docker-compose.yml for easy containerization and deployment:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+docker-compose up
+```
 
-## License
+For cloud deployment, you can use services like Heroku, AWS, or DigitalOcean. Ensure environment variables are properly set in your deployment environment.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+13. Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss the proposed changes.
+
+14. License
+This project is UNLICENSED - see package.json for more details.
