@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, Query, HttpStatus, UseInterceptors } from '@nestjs/common';
+import { Response } from 'express';
+import { Controller, Post, Body, Get, Query, HttpStatus, UseInterceptors, Res, HttpException } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DESCRIPTIONS, MESSAGES, ROUTES, SWAGGER } from 'consts';
@@ -10,7 +11,7 @@ import { WeatherCoordinatesDto } from 'weather/dto';
 @ApiTags(SWAGGER.WEATHER.CONTROLLER.TAGS)
 @Controller(ROUTES.WEATHER)
 export class WeatherController {
-  constructor(private weatherService: WeatherService) {}
+  constructor(private weatherService: WeatherService) { }
 
   /**
    * @description Fetches weather data based on provided coordinates and saves it in the database.
@@ -31,28 +32,43 @@ export class WeatherController {
   async fetchAndSaveWeather(
     @Body() coordinates: WeatherCoordinatesDto,
   ): Promise<Weather> {
-    return this.weatherService.fetchAndSaveWeather(coordinates);
+    try {
+      const weather = await this.weatherService.fetchAndSaveWeather(coordinates);
+
+      return weather;
+    } catch (error) {
+      throw new HttpException(
+        MESSAGES.ERROR_FETCH_AND_SAVE,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   /**
    * @description Retrieves weather data for the specified coordinates from the database.
    * 
    * @param {WeatherCoordinatesDto} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch.
-   * @returns {Promise<Weather>} - The weather record retrieved from the database.
+   * @returns {Promise<Weather | null>} - The weather record retrieved from the database.
    * @throws {HttpException} - Throws an exception if the weather data is not found in the database.
    * 
    * @remarks
    * This endpoint fetches weather data (e.g., current weather, hourly forecast, or daily forecast)
    * from the database. If no data is found, a `NOT_FOUND` error is returned.
-   */  
+   */
   @Get(ROUTES.ROOT)
   @ApiOperation({ summary: SWAGGER.WEATHER.CONTROLLER.GET })
   @ApiResponse({ status: HttpStatus.OK, type: Weather, description: DESCRIPTIONS.WEATHER_RECEIVED })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseInterceptors(WeatherInterceptor)
   async getWeather(
-    @Query() coordinates: WeatherCoordinatesDto,
-  ): Promise<Weather> {
-    return this.weatherService.getWeather(coordinates);
+    @Query() coordinates: WeatherCoordinatesDto, @Res() response: Response
+  ): Promise<Weather | null> {
+    const weather = await this.weatherService.getWeather(coordinates);
+
+    if (!weather) {
+      throw new Error(MESSAGES.NO_WEATHERE_RECORDS);
+    }
+
+    return weather;
   }
 }

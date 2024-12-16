@@ -1,11 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { WeatherService } from './weather.service';
-import { Weather } from 'weather/weather.entity';
-import { Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import axios from 'axios';
-import { COORDINATES } from 'types';
-import { WeatherPart } from '../types';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { WeatherService } from 'weather/weather.service';
+import { Weather } from 'weather/weather.entity';
+import { COORDINATES, WeatherPart } from 'types';
+import { MESSAGES } from 'consts';
 
 jest.mock('axios');
 
@@ -19,11 +20,15 @@ describe('WeatherService', () => {
         WeatherService,
         {
           provide: getRepositoryToken(Weather),
-          useClass: Repository,
+          useClass: class {
+            create = jest.fn().mockImplementation((entity) => entity);
+            save = jest.fn().mockImplementation((entity) => Promise.resolve(entity));
+            findOne = jest.fn();
+          },
         },
       ],
     }).compile();
-
+  
     weatherService = module.get<WeatherService>(WeatherService);
     weatherRepository = module.get<Repository<Weather>>(getRepositoryToken(Weather));
   });
@@ -59,11 +64,11 @@ describe('WeatherService', () => {
     });
 
     it('should throw an error if API request fails', async () => {
-      (axios.get as jest.Mock).mockRejectedValue(new Error('API request failed'));
+      (axios.get as jest.Mock).mockRejectedValue(new Error(MESSAGES.API_FAILED));
 
       const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
 
-      await expect(weatherService.fetchAndSaveWeather(coordinates)).rejects.toThrowError('API request failed');
+      await expect(weatherService.fetchAndSaveWeather(coordinates)).rejects.toThrow(MESSAGES.API_FAILED);
     });
   });
 
@@ -94,12 +99,13 @@ describe('WeatherService', () => {
       expect(result.data).toEqual(mockWeatherData.data);
     });
 
-    it('should throw an error if weather data is not found in the database', async () => {
-      jest.spyOn(weatherRepository, 'findOne').mockResolvedValue(undefined);
-
-      const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
-
-      await expect(weatherService.getWeather(coordinates)).rejects.toThrowError('Weather data not found');
+    it('should return null if weather data is not found in the database', async () => {
+        jest.spyOn(weatherRepository, 'findOne').mockResolvedValue(null);
+    
+        const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+    
+        const result = await weatherService.getWeather(coordinates);
+        expect(result).toBeNull();
     });
   });
 });

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Weather } from 'weather/weather.entity';
 
 import { COORDINATES } from 'types';
+import { MESSAGES } from 'consts';
 
 const METRIC = 'metric';
 
@@ -31,7 +32,7 @@ export class WeatherService {
      * The data fetched from the OpenWeatherMap API is saved in the `Weather` entity,
      * which contains `lat`, `lon`, `part` (the part of the weather data), and the raw weather data itself.
      */
-    async fetchAndSaveWeather(coordinates: COORDINATES): Promise<Weather> {
+    async fetchAndSaveWeather(coordinates: COORDINATES): Promise<Weather | null> {
         const { lat, lon, part } = coordinates || {};
 
         const response = await axios.get(
@@ -46,6 +47,13 @@ export class WeatherService {
                 }
             }
         );
+
+        if (!response) {
+            throw new HttpException(
+              MESSAGES.API_FAILED,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
 
         const weatherData = response.data;
 
@@ -63,17 +71,17 @@ export class WeatherService {
      * @description Retrieves weather data for the given coordinates and part from the database.
      * 
      * @param {COORDINATES} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch (e.g., 'current', 'hourly', 'daily').
-     * @returns {Promise<Weather>} - The weather data record retrieved from the database.
+     * @returns {Promise<Weather | null>} - The weather data record retrieved from the database.
      * @throws {Error} - Throws an error if the weather data is not found for the provided coordinates and part.
      * 
      * @remarks
      * This method looks for an existing weather record in the database matching the provided coordinates and part.
      * If no such record exists, an exception will be thrown.
      */
-    async getWeather(coordinates: COORDINATES): Promise<Weather> {
+    async getWeather(coordinates: COORDINATES): Promise<Weather | null> {
         const { lat, lon, part } = coordinates || {};
 
-        return this.weatherRepository.findOne({
+        return await this.weatherRepository.findOne({
             where: { lat, lon, part },
         });
     }
