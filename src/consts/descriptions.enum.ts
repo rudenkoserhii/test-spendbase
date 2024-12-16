@@ -1,7 +1,5 @@
 export const DESCRIPTIONS = {
-    SIGNED_UP: 'User signed up',
-    LOGGED_IN: 'User logged in',
-    PASSWORD_UPDATED: 'Password updated',
-    LOGGED_OUT: 'User logged out',
-    BOOKING_DELETED: 'Booking deleted',
+    WEATHER_RECORDED: 'The weather data recorded',
+    WEATHER_RECEIVED: 'The weather data by coordinates',
+    GREETINGS: 'Test greetings of the running app'
 }

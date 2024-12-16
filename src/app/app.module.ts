@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { WeatherModule } from '../weather/weather.module';
-import { DatabaseModule } from '../database/database.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
+import { AppController } from 'app/app.controller';
+import { AppService } from 'app/app.service';
+import { DatabaseModule } from 'database/database.module';
+import { WeatherModule } from 'weather/weather.module';
 
 const TTL = 60000;
 const LIMIT = 14;

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WeatherController } from './weather.controller';
-import { WeatherService } from './weather.service';
-import { Weather } from './weather.entity';
-import { WeatherInterceptor } from './weather.interceptor';
+
+import { WeatherController } from 'weather/weather.controller';
+import { Weather } from 'weather/weather.entity';
+import { WeatherInterceptor } from 'weather/weather.interceptor';
+import { WeatherService } from 'weather/weather.service';
 
 @Module({
   imports: [

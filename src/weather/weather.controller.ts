@@ -1,34 +1,57 @@
-import { Controller, Post, Body, Get, Query, HttpStatus } from '@nestjs/common';
-import { WeatherService } from './weather.service';
-import { Weather } from './weather.entity';
-import { UseInterceptors } from '@nestjs/common';
-import { WeatherInterceptor } from './weather.interceptor';
-import { MESSAGES, ROUTES, SWAGGER } from 'consts';
+import { Controller, Post, Body, Get, Query, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { COORDINATES } from 'types';
+
+import { DESCRIPTIONS, MESSAGES, ROUTES, SWAGGER } from 'consts';
+import { Weather } from 'weather/weather.entity';
+import { WeatherInterceptor } from 'weather/weather.interceptor';
+import { WeatherService } from 'weather/weather.service';
+import { WeatherCoordinatesDto } from 'weather/dto';
 
 @ApiTags(SWAGGER.WEATHER.CONTROLLER.TAGS)
 @Controller(ROUTES.WEATHER)
 export class WeatherController {
   constructor(private weatherService: WeatherService) {}
 
+  /**
+   * @description Fetches weather data based on provided coordinates and saves it in the database.
+   * 
+   * @param {WeatherCoordinatesDto} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch.
+   * @returns {Promise<Weather>} - The saved weather record.
+   * @throws {HttpException} - Throws an exception if the weather data could not be fetched or saved.
+   * 
+   * @remarks
+   * This endpoint uses the OpenWeatherMap API to fetch the weather data based on the provided coordinates
+   * and saves the data to the database. The valid values for the "part" field in the `coordinates` DTO
+   * are `current`, `hourly`, and `daily`.
+   */
   @Post(ROUTES.ROOT)
   @ApiOperation({ summary: SWAGGER.WEATHER.CONTROLLER.FETCH_AND_SAVE })
-  @ApiResponse({ status: HttpStatus.OK, type: Weather, description: MESSAGES.WEATHER_RECORDED })
+  @ApiResponse({ status: HttpStatus.OK, type: Weather, description: DESCRIPTIONS.WEATHER_RECORDED })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   async fetchAndSaveWeather(
-    @Body() coordinates: COORDINATES,
+    @Body() coordinates: WeatherCoordinatesDto,
   ): Promise<Weather> {
     return this.weatherService.fetchAndSaveWeather(coordinates);
   }
 
+  /**
+   * @description Retrieves weather data for the specified coordinates from the database.
+   * 
+   * @param {WeatherCoordinatesDto} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch.
+   * @returns {Promise<Weather>} - The weather record retrieved from the database.
+   * @throws {HttpException} - Throws an exception if the weather data is not found in the database.
+   * 
+   * @remarks
+   * This endpoint fetches weather data (e.g., current weather, hourly forecast, or daily forecast)
+   * from the database. If no data is found, a `NOT_FOUND` error is returned.
+   */  
   @Get(ROUTES.ROOT)
   @ApiOperation({ summary: SWAGGER.WEATHER.CONTROLLER.GET })
-  @ApiResponse({ status: HttpStatus.OK, type: Weather, description: MESSAGES.WEATHER_RECEIVED })
+  @ApiResponse({ status: HttpStatus.OK, type: Weather, description: DESCRIPTIONS.WEATHER_RECEIVED })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseInterceptors(WeatherInterceptor)
   async getWeather(
-    @Query() coordinates: COORDINATES,
+    @Query() coordinates: WeatherCoordinatesDto,
   ): Promise<Weather> {
     return this.weatherService.getWeather(coordinates);
   }

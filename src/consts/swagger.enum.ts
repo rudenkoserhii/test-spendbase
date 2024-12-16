@@ -1,9 +1,15 @@
 export const SWAGGER = {
     WEATHER: {
         CONTROLLER: {
-            TAGS: 'Authorisation',
-            FETCH_AND_SAVE: 'Sign Up for user',
-            GET: 'Log In for user',
+            TAGS: 'Weather',
+            FETCH_AND_SAVE: 'Fetch weather data by coordinates and save in the DataBase',
+            GET: 'Get weather data by coordinates from the DataBase',
+        },
+    },
+    APP: {
+        CONTROLLER: {
+            TAGS: 'Health test',
+            GET_GRRETINGS: 'Get greetings',
         },
     },
 }

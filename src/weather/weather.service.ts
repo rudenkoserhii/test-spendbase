@@ -1,9 +1,12 @@
-import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Weather } from './weather.entity';
+import { Weather } from 'weather/weather.entity';
+
 import { COORDINATES } from 'types';
+
+const METRIC = 'metric';
 
 @Injectable()
 export class WeatherService {
@@ -15,6 +18,19 @@ export class WeatherService {
         private weatherRepository: Repository<Weather>,
     ) { }
 
+
+    /**
+     * @description Fetches weather data from the OpenWeatherMap API for the given coordinates and part
+     * and saves it to the database.
+     * 
+     * @param {COORDINATES} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch (e.g., 'current', 'hourly', 'daily').
+     * @returns {Promise<Weather>} - The saved weather record after saving to the database.
+     * @throws {Error} - Throws an error if the OpenWeatherMap API request fails or if there is a database issue.
+     * 
+     * @remarks
+     * The data fetched from the OpenWeatherMap API is saved in the `Weather` entity,
+     * which contains `lat`, `lon`, `part` (the part of the weather data), and the raw weather data itself.
+     */
     async fetchAndSaveWeather(coordinates: COORDINATES): Promise<Weather> {
         const { lat, lon, part } = coordinates || {};
 
@@ -26,6 +42,7 @@ export class WeatherService {
                     lon,
                     exclude: part,
                     appid: this.apiKey,
+                    units: METRIC,
                 }
             }
         );
@@ -42,6 +59,17 @@ export class WeatherService {
         return this.weatherRepository.save(weather);
     }
 
+    /**
+     * @description Retrieves weather data for the given coordinates and part from the database.
+     * 
+     * @param {COORDINATES} coordinates - The coordinates (latitude, longitude) and the part of weather data to fetch (e.g., 'current', 'hourly', 'daily').
+     * @returns {Promise<Weather>} - The weather data record retrieved from the database.
+     * @throws {Error} - Throws an error if the weather data is not found for the provided coordinates and part.
+     * 
+     * @remarks
+     * This method looks for an existing weather record in the database matching the provided coordinates and part.
+     * If no such record exists, an exception will be thrown.
+     */
     async getWeather(coordinates: COORDINATES): Promise<Weather> {
         const { lat, lon, part } = coordinates || {};
 
