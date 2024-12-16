@@ -2,9 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WeatherController } from './weather.controller';
 import { WeatherService } from './weather.service';
 import { WeatherCoordinatesDto } from './dto';
-import { HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
-import { COORDINATES, WeatherPart } from 'types';
+import { WeatherPart } from 'types';
 import { MESSAGES } from 'consts';
 
 describe('WeatherController', () => {
@@ -60,8 +58,7 @@ describe('WeatherController', () => {
       jest.spyOn(weatherService, 'getWeather').mockResolvedValue(mockWeather);
 
       const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
-      const mockResponse = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
-      const result = await controller.getWeather(coordinates, mockResponse);
+      const result = await controller.getWeather(coordinates);
 
       expect(result).toEqual(mockWeather);
       expect(weatherService.getWeather).toHaveBeenCalledWith(coordinates);
@@ -71,9 +68,8 @@ describe('WeatherController', () => {
       jest.spyOn(weatherService, 'getWeather').mockResolvedValue(null);
 
       const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
-      const mockResponse = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
 
-      await expect(controller.getWeather(coordinates, mockResponse)).rejects.toThrow(MESSAGES.NO_WEATHERE_RECORDS);
+      await expect(controller.getWeather(coordinates)).rejects.toThrow(MESSAGES.NO_WEATHERE_RECORDS);
     });
   });
 });

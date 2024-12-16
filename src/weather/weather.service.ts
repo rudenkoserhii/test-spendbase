@@ -35,6 +35,17 @@ export class WeatherService {
     async fetchAndSaveWeather(coordinates: COORDINATES): Promise<Weather | null> {
         const { lat, lon, part } = coordinates || {};
 
+        const recordIsExist = await this.weatherRepository.findOne({
+            where: { lat, lon, part },
+        })
+
+        if (recordIsExist) {
+            throw new HttpException(
+                MESSAGES.WEATHER_RECORD_EXISTS,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+        
         const response = await axios.get(
             this.url,
             {
@@ -50,10 +61,10 @@ export class WeatherService {
 
         if (!response) {
             throw new HttpException(
-              MESSAGES.API_FAILED,
-              HttpStatus.BAD_REQUEST,
+                MESSAGES.API_FAILED,
+                HttpStatus.BAD_REQUEST,
             );
-          }
+        }
 
         const weatherData = response.data;
 

@@ -6,4 +6,5 @@ export const MESSAGES = {
     NO_WEATHERE_RECORDS: 'Weather data not found',
     API_FAILED: 'API request failed',
     ERROR_FETCH_AND_SAVE: 'Error fetching API or saving to DB',
+    WEATHER_RECORD_EXISTS: 'The weather data already exists in DB',
 }

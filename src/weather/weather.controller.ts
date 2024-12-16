@@ -1,5 +1,4 @@
-import { Response } from 'express';
-import { Controller, Post, Body, Get, Query, HttpStatus, UseInterceptors, Res, HttpException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, HttpStatus, UseInterceptors, HttpException } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DESCRIPTIONS, MESSAGES, ROUTES, SWAGGER } from 'consts';
@@ -36,9 +35,9 @@ export class WeatherController {
       const weather = await this.weatherService.fetchAndSaveWeather(coordinates);
 
       return weather;
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
-        MESSAGES.ERROR_FETCH_AND_SAVE,
+        error?.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -61,14 +60,16 @@ export class WeatherController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseInterceptors(WeatherInterceptor)
   async getWeather(
-    @Query() coordinates: WeatherCoordinatesDto, @Res() response: Response
+    @Query() coordinates: WeatherCoordinatesDto,
   ): Promise<Weather | null> {
     const weather = await this.weatherService.getWeather(coordinates);
 
     if (!weather) {
-      throw new Error(MESSAGES.NO_WEATHERE_RECORDS);
+      throw new HttpException(
+        MESSAGES.NO_WEATHERE_RECORDS,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
     return weather;
   }
 }
