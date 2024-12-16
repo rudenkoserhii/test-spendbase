@@ -49,7 +49,7 @@ This project provides a RESTful API for handling weather data, including fetchin
 4. Installation
 Clone the repository:
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/rudenkoserhii/test-spendbase
 cd test-spendbase
 ```
 
