@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app/app.module';
+
+import { AppModule } from 'app/app.module';
 import { MESSAGES } from 'consts';
 
 describe('AppController (e2e)', () => {
@@ -17,7 +18,8 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request.default(app.getHttpServer())
+    return request
+      .default(app.getHttpServer())
       .get('/')
       .expect(200)
       .expect(MESSAGES.HELLO_GREETINGS);

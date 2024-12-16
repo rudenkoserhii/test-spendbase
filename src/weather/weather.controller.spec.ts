@@ -33,31 +33,63 @@ describe('WeatherController', () => {
 
   describe('fetchAndSaveWeather', () => {
     it('should save weather data successfully', async () => {
-      const mockWeather = { id: 1, lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT, data: {} };
-      jest.spyOn(weatherService, 'fetchAndSaveWeather').mockResolvedValue(mockWeather);
+      const mockWeather = {
+        id: 1,
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+        data: {},
+      };
+      jest
+        .spyOn(weatherService, 'fetchAndSaveWeather')
+        .mockResolvedValue(mockWeather);
 
-      const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: WeatherCoordinatesDto = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
       const result = await controller.fetchAndSaveWeather(coordinates);
 
       expect(result).toEqual(mockWeather);
-      expect(weatherService.fetchAndSaveWeather).toHaveBeenCalledWith(coordinates);
+      expect(weatherService.fetchAndSaveWeather).toHaveBeenCalledWith(
+        coordinates,
+      );
     });
 
     it('should throw an error if fetch and save fails', async () => {
-      jest.spyOn(weatherService, 'fetchAndSaveWeather').mockRejectedValue(new Error(MESSAGES.ERROR_FETCH_AND_SAVE));
+      jest
+        .spyOn(weatherService, 'fetchAndSaveWeather')
+        .mockRejectedValue(new Error(MESSAGES.ERROR_FETCH_AND_SAVE));
 
-      const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: WeatherCoordinatesDto = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
 
-      await expect(controller.fetchAndSaveWeather(coordinates)).rejects.toThrow(MESSAGES.ERROR_FETCH_AND_SAVE);
+      await expect(controller.fetchAndSaveWeather(coordinates)).rejects.toThrow(
+        MESSAGES.ERROR_FETCH_AND_SAVE,
+      );
     });
   });
 
   describe('getWeather', () => {
     it('should return weather data successfully', async () => {
-      const mockWeather = { id: 1, lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT, data: {} };
+      const mockWeather = {
+        id: 1,
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+        data: {},
+      };
       jest.spyOn(weatherService, 'getWeather').mockResolvedValue(mockWeather);
 
-      const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: WeatherCoordinatesDto = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
       const result = await controller.getWeather(coordinates);
 
       expect(result).toEqual(mockWeather);
@@ -67,9 +99,15 @@ describe('WeatherController', () => {
     it('should throw an error if weather data is not found', async () => {
       jest.spyOn(weatherService, 'getWeather').mockResolvedValue(null);
 
-      const coordinates: WeatherCoordinatesDto = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: WeatherCoordinatesDto = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
 
-      await expect(controller.getWeather(coordinates)).rejects.toThrow(MESSAGES.NO_WEATHERE_RECORDS);
+      await expect(controller.getWeather(coordinates)).rejects.toThrow(
+        MESSAGES.NO_WEATHERE_RECORDS,
+      );
     });
   });
 });

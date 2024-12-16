@@ -1,1 +1,1 @@
-export { WeatherCoordinatesDto } from './weather-coordinates.dto'
+export { WeatherCoordinatesDto } from './weather-coordinates.dto';

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
@@ -12,8 +13,11 @@ const LIMIT = 14;
 
 @Module({
   imports: [
-    WeatherModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     DatabaseModule,
+    WeatherModule,
     ThrottlerModule.forRoot([
       {
         ttl: TTL,
@@ -30,4 +34,4 @@ const LIMIT = 14;
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

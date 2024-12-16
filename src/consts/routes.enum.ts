@@ -1,5 +1,5 @@
 export const ROUTES = {
-    ROOT: '/',
-    WEATHER: 'weather',
-    SWAGGER: 'swagger',
-}
+  ROOT: '/',
+  WEATHER: 'weather',
+  SWAGGER: 'swagger',
+};

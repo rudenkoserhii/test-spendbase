@@ -13,11 +13,14 @@ export class AppController {
   /**
    * @desc Handles the GET request for the root endpoint and returns a greeting message.
    * @returns {string} - A greeting message "Hello, World!" fetched from the AppService.
-   */  
+   */
   @Get(ROUTES.ROOT)
-    @ApiOperation({ summary: SWAGGER.APP.CONTROLLER.GET_GRRETINGS })
-    @ApiResponse({ status: HttpStatus.OK, description: DESCRIPTIONS.GREETINGS })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
+  @ApiOperation({ summary: SWAGGER.APP.CONTROLLER.GET_GRRETINGS })
+  @ApiResponse({ status: HttpStatus.OK, description: DESCRIPTIONS.GREETINGS })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: MESSAGES.NOT_FOUND,
+  })
   getHello(): GREETINGS {
     return this.appService.getHello();
   }

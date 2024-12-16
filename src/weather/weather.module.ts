@@ -7,13 +7,8 @@ import { WeatherInterceptor } from 'weather/weather.interceptor';
 import { WeatherService } from 'weather/weather.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Weather]),
-  ],
+  imports: [TypeOrmModule.forFeature([Weather])],
   controllers: [WeatherController],
-  providers: [
-    WeatherService,
-    WeatherInterceptor,
-  ],
+  providers: [WeatherService, WeatherInterceptor],
 })
 export class WeatherModule {}

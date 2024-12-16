@@ -20,21 +20,20 @@ async function bootstrap() {
 
   const { name, version, description } = pkg || {};
 
-  const app = await NestFactory.create(
-    AppModule,
-    { cors: true },
-  );
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   app.enableCors({
     origin: true,
     credentials: true,
   });
 
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle(name)

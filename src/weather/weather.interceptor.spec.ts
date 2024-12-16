@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WeatherInterceptor } from './weather.interceptor';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 describe('WeatherInterceptor', () => {
   let weatherInterceptor: WeatherInterceptor;
@@ -20,7 +19,7 @@ describe('WeatherInterceptor', () => {
   });
 
   describe('intercept', () => {
-    it('should transform weather data correctly', done => {
+    it('should transform weather data correctly', (done) => {
       const mockData = {
         data: {
           sys: {
@@ -39,7 +38,7 @@ describe('WeatherInterceptor', () => {
           wind: {
             speed: 5.5,
           },
-        }
+        },
       };
 
       const mockExecutionContext = {
@@ -63,23 +62,25 @@ describe('WeatherInterceptor', () => {
         wind_speed: 5.5,
       };
 
-      weatherInterceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: (result) => {
-          expect(result).toEqual(expectedResult);
-          done();
-        },
-        error: done.fail,
-      });
+      weatherInterceptor
+        .intercept(mockExecutionContext, mockCallHandler)
+        .subscribe({
+          next: (result) => {
+            expect(result).toEqual(expectedResult);
+            done();
+          },
+          error: done.fail,
+        });
     });
 
-    it('should handle undefined or missing data gracefully', done => {
+    it('should handle undefined or missing data gracefully', (done) => {
       const mockData = {
         data: {
           sys: {},
           main: {},
           current: {},
           wind: {},
-        }
+        },
       };
 
       const mockExecutionContext = {
@@ -103,13 +104,15 @@ describe('WeatherInterceptor', () => {
         wind_speed: undefined,
       };
 
-      weatherInterceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
-        next: (result) => {
-          expect(result).toEqual(expectedResult);
-          done();
-        },
-        error: done.fail,
-      });
+      weatherInterceptor
+        .intercept(mockExecutionContext, mockCallHandler)
+        .subscribe({
+          next: (result) => {
+            expect(result).toEqual(expectedResult);
+            done();
+          },
+          error: done.fail,
+        });
     });
   });
 });

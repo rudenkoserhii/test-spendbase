@@ -22,15 +22,19 @@ describe('WeatherService', () => {
           provide: getRepositoryToken(Weather),
           useClass: class {
             create = jest.fn().mockImplementation((entity) => entity);
-            save = jest.fn().mockImplementation((entity) => Promise.resolve(entity));
+            save = jest
+              .fn()
+              .mockImplementation((entity) => Promise.resolve(entity));
             findOne = jest.fn();
           },
         },
       ],
     }).compile();
-  
+
     weatherService = module.get<WeatherService>(WeatherService);
-    weatherRepository = module.get<Repository<Weather>>(getRepositoryToken(Weather));
+    weatherRepository = module.get<Repository<Weather>>(
+      getRepositoryToken(Weather),
+    );
   });
 
   describe('fetchAndSaveWeather', () => {
@@ -38,8 +42,22 @@ describe('WeatherService', () => {
       const mockApiResponse = {
         data: {
           coord: { lon: 7.367, lat: 45.133 },
-          weather: [{ id: 501, main: 'Rain', description: 'moderate rain', icon: '10d' }],
-          main: { temp: 284.2, feels_like: 282.93, temp_min: 283.06, temp_max: 286.82, pressure: 1021, humidity: 60 },
+          weather: [
+            {
+              id: 501,
+              main: 'Rain',
+              description: 'moderate rain',
+              icon: '10d',
+            },
+          ],
+          main: {
+            temp: 284.2,
+            feels_like: 282.93,
+            temp_min: 283.06,
+            temp_max: 286.82,
+            pressure: 1021,
+            humidity: 60,
+          },
           wind: { speed: 4.09, deg: 121, gust: 3.47 },
         },
       };
@@ -53,7 +71,11 @@ describe('WeatherService', () => {
         data: mockApiResponse.data,
       });
 
-      const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: COORDINATES = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
 
       const result = await weatherService.fetchAndSaveWeather(coordinates);
 
@@ -64,11 +86,19 @@ describe('WeatherService', () => {
     });
 
     it('should throw an error if API request fails', async () => {
-      (axios.get as jest.Mock).mockRejectedValue(new Error(MESSAGES.API_FAILED));
+      (axios.get as jest.Mock).mockRejectedValue(
+        new Error(MESSAGES.API_FAILED),
+      );
 
-      const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: COORDINATES = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
 
-      await expect(weatherService.fetchAndSaveWeather(coordinates)).rejects.toThrow(MESSAGES.API_FAILED);
+      await expect(
+        weatherService.fetchAndSaveWeather(coordinates),
+      ).rejects.toThrow(MESSAGES.API_FAILED);
     });
   });
 
@@ -81,15 +111,35 @@ describe('WeatherService', () => {
         part: WeatherPart.CURRENT,
         data: {
           coord: { lon: 7.367, lat: 45.133 },
-          weather: [{ id: 501, main: 'Rain', description: 'moderate rain', icon: '10d' }],
-          main: { temp: 284.2, feels_like: 282.93, temp_min: 283.06, temp_max: 286.82, pressure: 1021, humidity: 60 },
+          weather: [
+            {
+              id: 501,
+              main: 'Rain',
+              description: 'moderate rain',
+              icon: '10d',
+            },
+          ],
+          main: {
+            temp: 284.2,
+            feels_like: 282.93,
+            temp_min: 283.06,
+            temp_max: 286.82,
+            pressure: 1021,
+            humidity: 60,
+          },
           wind: { speed: 4.09, deg: 121, gust: 3.47 },
         },
       };
 
-      jest.spyOn(weatherRepository, 'findOne').mockResolvedValue(mockWeatherData);
+      jest
+        .spyOn(weatherRepository, 'findOne')
+        .mockResolvedValue(mockWeatherData);
 
-      const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
+      const coordinates: COORDINATES = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
 
       const result = await weatherService.getWeather(coordinates);
 
@@ -100,12 +150,16 @@ describe('WeatherService', () => {
     });
 
     it('should return null if weather data is not found in the database', async () => {
-        jest.spyOn(weatherRepository, 'findOne').mockResolvedValue(null);
-    
-        const coordinates: COORDINATES = { lat: 45.133, lon: 7.367, part: WeatherPart.CURRENT };
-    
-        const result = await weatherService.getWeather(coordinates);
-        expect(result).toBeNull();
+      jest.spyOn(weatherRepository, 'findOne').mockResolvedValue(null);
+
+      const coordinates: COORDINATES = {
+        lat: 45.133,
+        lon: 7.367,
+        part: WeatherPart.CURRENT,
+      };
+
+      const result = await weatherService.getWeather(coordinates);
+      expect(result).toBeNull();
     });
   });
 });
